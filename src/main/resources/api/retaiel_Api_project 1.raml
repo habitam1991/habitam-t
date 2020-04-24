@@ -1,0 +1,229 @@
+#%RAML 1.0
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/805829dd-acbb-4fe2-a950-ac59ea47198a/ # 
+title: project_1
+/products:
+  description: retrive products
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: [{"id":"1",
+                      "name":"hp",
+                      "code":"1234",
+                      "rate":"3",
+                      "productCategory":"industry"
+                       }]
+      404:
+        body:
+          application/json:
+            example: {massage : "bad request"}
+                               
+  post:
+    description: products Creates a new product based on request JSON
+    responses:
+      200:
+        body:
+          application/json:
+            example: [{"product id":"03",
+                      "product name":"xyz",
+                      "product code":"3546",
+                      "product rate":"11",
+                      "productCategory":"industry"
+                        }]
+      201:
+        body:
+          application/json:
+            example: {"massage": "created"}
+  
+  /{productID}:
+    uriParameters:
+      productID:
+        type: integer                    
+    get:
+      description: fetch a specific product
+      responses:
+        200:
+          body:
+            application/json:
+              example: [{"product id":"2",
+                        "product name":"mac",
+                        "product code":"1234",
+                        "product rate":"12",
+                        "productCategory":"industry"
+                        }]
+        400:
+          body:
+            application/json:
+              example: {"not found"}
+                                
+    put:
+      description: Updates product data based on request JSON
+      responses:
+        200:
+          body:
+            application/json:
+              example: {"id":0, "name":"dell"}
+    delete:
+      description: Delete an existing product if it is not associated with a bill.
+      responses:
+        200:
+          body:
+            application/json:
+              example:  {"remove product spacific id"}
+/Bill:
+  get:
+    description: fetches all bill data
+    responses:
+      200:
+        body:
+          application/json:
+            example: [{"id":"2",
+                      "name":"mac",
+                      "code":"1234",
+                      "rate":"12",
+                      "productCategory":""
+                       }]
+  post:
+    description: creates a bill Id
+    responses:
+      200:
+        body:
+          application/json:
+            example: {"id":1}
+                               
+                                
+  /{BillID}:
+    get:
+      description: fetches bill of a particular id
+      responses:
+        200:
+          body:
+            application/json:
+              example: [{"id":"2",
+                        "name":"mac",
+                        "code":"1234",
+                       "rate":"12",
+                       "productCategory":""
+                       }]
+    put:
+      description: Updates bill data             
+      responses:
+        200:
+          body:
+            application/json:
+              example: {"id":2,"name":"mac"}
+    delete:
+      description: Delete bill from the system.
+      responses:
+        200:
+          body:
+            application/json:
+              example: {"remove bill id secssesfully"}
+/productcatagory:
+  get:
+    description: productcatagories fetches list of all productcatagory data
+    responses:
+      200:
+        body:
+          application/json:
+            example: [{"id":04,
+                      "name":"industry"
+                      }]
+  post:
+    description: Creates a new productcatagory based on request JSON
+    responses:
+      200:
+        body:
+          application/json:
+            example: [{"id":04,
+                        "name":"industry"
+                      }]
+  /{id}:
+    uriParameters:
+      id:
+        type: 
+    get:
+      description: fetch a specific productcatagory
+      responses:
+        200:
+          body:
+            application/json:
+              example: {"id":,"name":"idustry"}
+        
+    put:
+      description: Updates productcatagory data based on request JSON
+      responses:
+        200:
+          body:
+            application/json:
+              example: {massage:"updated successfully"}
+    delete:
+      description: Delete an existing productcatagory
+      responses:
+        200:
+          body:
+            application/json:
+              example: {"remove productcatagory spacific id successfully"}
+        404:
+          body:
+            application/json:
+              example:
+                {"massage":"bad request"}      
+                
+                                                                                    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+              
+
+    
+
+
+
+      
+
+            
+     
+                  
+
+
+                 
+            
+      
+      
+        
+           
+
+                  
+
+           
+
+            
+   
+    
+      
+
+    

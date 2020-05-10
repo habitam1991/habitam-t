@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b7250913-8616-409f-a301-24839e281c85" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="testFlow" doc:id="99f01876-26c5-488d-b6fa-bbf427b78848" >
+		<http:listener doc:name="Listener" doc:id="7e85319e-1521-4bbc-861b-8fbbf9fca45d" config-ref="HTTP_Listener_config" path="/bb"/>
+		<ee:transform doc:name="Transform Message" doc:id="1cc72fce-14a9-43c7-929d-99cbff1bbdda" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+
+import dw::System
+import * from dw::util::Diff
+var a={"age":"test"}
+var b={"age":"test2"}
+fun toPhoneFormat(str: String) =
+    "(" ++ str[0 to 2] ++ ") " ++ str[3 to 5] ++ "-" ++ str[6 to 9]
+  var num1=5
+  var num2=6
+  fun myfun()=num1+num2
+  fun myfun2()= "my hazband name":"melak" ++" " ++"terf"
+--- 
+
+user:payload.user.user
+
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>	
+	
+</mule>

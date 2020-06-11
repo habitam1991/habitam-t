@@ -1,39 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b7250913-8616-409f-a301-24839e281c85" >
 		<http:listener-connection host="0.0.0.0" port="8081" />
 	</http:listener-config>
-	<flow name="testFlow" doc:id="99f01876-26c5-488d-b6fa-bbf427b78848" >
-		<http:listener doc:name="Listener" doc:id="7e85319e-1521-4bbc-861b-8fbbf9fca45d" config-ref="HTTP_Listener_config" path="/bb"/>
-		<ee:transform doc:name="Transform Message" doc:id="1cc72fce-14a9-43c7-929d-99cbff1bbdda" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/xml
-
-import dw::System
-import * from dw::util::Diff
-var a={"age":"test"}
-var b={"age":"test2"}
-fun toPhoneFormat(str: String) =
-    "(" ++ str[0 to 2] ++ ") " ++ str[3 to 5] ++ "-" ++ str[6 to 9]
-  var num1=5
-  var num2=6
-  fun myfun()=num1+num2
-  fun myfun2()= "my hazband name":"melak" ++" " ++"terf"
---- 
-
-user:payload.user.user
-
-
-]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="886a66dc-d86f-495b-af82-4b4a5f35d924" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" database="craftdb" />
+	</db:config>
+	<flow name="testFlow1" doc:id="a8b283ee-1346-4720-bcd9-db240b0720fd" >
+		<http:listener doc:name="Listener" doc:id="cffe9894-627c-45bc-a6d2-43bd70969206" config-ref="HTTP_Listener_config" path="/choice"/>
+		<choice doc:name="Choice" doc:id="422898d0-83a9-4c42-b239-a6f20b5e5168" >
+			<when expression="#[attributes.queryParams.data=='personsdata']">
+				<db:select doc:name="Select" doc:id="ff9957d3-d49f-4731-879e-6d31f800b986" config-ref="Database_Config">
+					<db:sql >select * from persons </db:sql>
+				</db:select>
+				<ee:transform doc:name="Transform Message" doc:id="6c8e473a-f740-48bf-8aaa-31c2cd4a5489" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression="#[attributes.queryParams.data=='piter']">
+				<file:read doc:name="Read" doc:id="f0d0acb4-02b7-4a84-8f1e-1bb08dbab920" path="E:\file\New folder (2)\nebhapro.json"/>
+				<ee:transform doc:name="Transform Message" doc:id="15607ab8-3b86-4a83-853e-94de69b0353e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<set-payload value="this is my chioce router" doc:name="Set Payload" doc:id="0cfe4d3a-08fa-47bf-804a-3d5f725c409d" />
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="testFlow" doc:id="393a13e8-7b85-4a43-8a13-1cee51a29cd8" >
+		<http:listener doc:name="Listener" doc:id="4f57ad8e-f379-4064-9b16-3979c220bac6" config-ref="HTTP_Listener_config" path="/if"/>
+		<choice doc:name="Choice" doc:id="a9135da4-a468-436f-9b18-7fab6fa20103" >
+			<when expression="#[attributes.queryParams.num &gt; '10']">
+				<set-payload value="my num is grater than 10" doc:name="Set Payload" doc:id="2a81278b-5dad-4c08-b9fb-8244ad7233b6" />
+			</when>
+			<when expression="#[attributes.queryParams.num &lt; 10]">
+				<set-payload value="less than 10" doc:name="Set Payload" doc:id="d1f9eb57-7015-4aa5-b580-0c408b7d4851" />
+			</when>
+			<otherwise >
+				<set-payload value="this is my num" doc:name="Set Payload" doc:id="19ce489d-0d23-4f66-b2c3-aca8707597a8" />
+			</otherwise>
+		</choice>
 	</flow>	
 	
 </mule>
